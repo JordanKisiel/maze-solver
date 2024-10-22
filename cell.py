@@ -42,8 +42,6 @@ class Cell():
         self.draw_wall(bottom_line, self.has_bottom)
         self.draw_wall(left_line, self.has_left)
 
-        
-
     def draw_move(self, to_cell, undo=False):
         color = "red" if not undo else "gray"
 
