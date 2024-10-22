@@ -3,6 +3,7 @@ from point import Point
 
 class Cell():
     def __init__(self,
+                 window=None,
                  has_left=True,
                  has_right=True,
                  has_top=True,
@@ -15,13 +16,12 @@ class Cell():
         self._y1 = 0
         self._x2 = 0
         self._y2 = 0
-        self._window = None
+        self._window = window 
 
-    def draw(self, window, x1, y1, x2, y2):
+    def draw(self, x1, y1, x2, y2):
         if x1 >= x2 or y1 >= y2:
             raise Exception("Invalid coordinates for cell")
             
-        self._window = window
         self._x1 = x1 
         self._y1 = y1 
         self._x2 = x2 
@@ -46,9 +46,8 @@ class Cell():
         if self.has_bottom:
             self._window.draw_line(bottom_line, "black")
 
-    def draw_move(self, window, to_cell, undo=False):
+    def draw_move(self, to_cell, undo=False):
         color = "red" if not undo else "gray"
-        self._window = window
 
         center1 = self.get_center()
         center2 = to_cell.get_center()
