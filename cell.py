@@ -37,14 +37,12 @@ class Cell():
         bottom_line = Line(lower_left, lower_right)
         left_line = Line(upper_left, lower_left)
 
-        if self.has_left:
-            self._window.draw_line(left_line, "black")
-        if self.has_top:
-            self._window.draw_line(top_line, "black")
-        if self.has_right:
-            self._window.draw_line(right_line, "black")
-        if self.has_bottom:
-            self._window.draw_line(bottom_line, "black")
+        self.draw_wall(top_line, self.has_top)
+        self.draw_wall(right_line, self.has_right)
+        self.draw_wall(bottom_line, self.has_bottom)
+        self.draw_wall(left_line, self.has_left)
+
+        
 
     def draw_move(self, to_cell, undo=False):
         color = "red" if not undo else "gray"
@@ -60,3 +58,10 @@ class Cell():
         y_center = (self._y2 - self._y1) / 2 + self._y1
 
         return Point(x_center, y_center) 
+    
+    def draw_wall(self, line, has_wall):
+        if has_wall:
+            self._window.draw_line(line, "black")
+        else:
+            self._window.draw_line(line, "#d9d9d9")
+        
