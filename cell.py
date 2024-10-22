@@ -40,11 +40,11 @@ class Cell():
         if self.has_left:
             self._window.draw_line(left_line, "black")
         if self.has_top:
-            self._window.draw_line(top_line, "red")
+            self._window.draw_line(top_line, "black")
         if self.has_right:
-            self._window.draw_line(right_line, "green")
+            self._window.draw_line(right_line, "black")
         if self.has_bottom:
-            self._window.draw_line(bottom_line, "blue")
+            self._window.draw_line(bottom_line, "black")
 
     def draw_move(self, window, to_cell, undo=False):
         color = "red" if not undo else "gray"
