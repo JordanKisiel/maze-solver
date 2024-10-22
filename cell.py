@@ -45,3 +45,19 @@ class Cell():
             self._window.draw_line(right_line, "green")
         if self.has_bottom:
             self._window.draw_line(bottom_line, "blue")
+
+    def draw_move(self, window, to_cell, undo=False):
+        color = "red" if not undo else "gray"
+        self._window = window
+
+        center1 = self.get_center()
+        center2 = to_cell.get_center()
+        line = Line(center1, center2)
+
+        self._window.draw_line(line, color)
+
+    def get_center(self):
+        x_center = (self._x2 - self._x1) / 2 + self._x1
+        y_center = (self._y2 - self._y1) / 2 + self._y1
+
+        return Point(x_center, y_center) 

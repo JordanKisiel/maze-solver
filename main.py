@@ -21,6 +21,8 @@ def main():
 
     missing_right = Cell(True, False, True, True)
     missing_right.draw(win, 560, 560, 590, 590)
+
+    default_cell.draw_move(win, missing_top)
     
     win.wait_for_close()
 
