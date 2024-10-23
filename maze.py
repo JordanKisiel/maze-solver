@@ -1,5 +1,6 @@
 from cell import Cell
 import time
+import random
 
 class Maze():
     def __init__(self, 
@@ -9,7 +10,8 @@ class Maze():
                  num_cols,
                  cell_size_x,
                  cell_size_y,
-                 window=None):
+                 window=None,
+                 seed=None):
 
         self.x1 = x1 
         self.y1 = y1 
@@ -19,6 +21,9 @@ class Maze():
         self.cell_size_y = cell_size_y
         self.window = window
         self._cells = []
+        
+        if seed != None:
+            self.seed = random.seed(seed)
 
         self._create_cells()
 
@@ -59,3 +64,54 @@ class Maze():
         self._cells[self.num_cols- 1][self.num_rows - 1].has_bottom = False
         self._draw_cell(0, 0)
         self._draw_cell(self.num_cols - 1, self.num_rows - 1)
+
+    def _break_walls(self, i, j):
+        visited = set()
+        visited.add(f"({i}, {j})")
+
+        self._break_walls_r(i, j, visited)
+
+    def _break_walls_r(self, i, j, visited):
+        while True:
+            to_visit = []
+            # must check bounds before adding neighbors
+            # must check visited before adding to make sure
+            # we don't move in loop
+            possible_neighbors = [(i, j + 1), (i + 1, j), (i, j - 1), (i - 1, j)]
+            for neighbor in possible_neighbors:
+                neighbor_str = f"({neighbor[0]}, {neighbor[1]})"
+                not_visited = neighbor_str not in visited
+                in_bounds_i = neighbor[0] < self.num_cols and neighbor[0] >= 0
+                in_bounds_y = neighbor[1] < self.num_rows and neighbor[1] >= 0
+
+                if not_visited and in_bounds_i and in_bounds_y:
+                    to_visit.append(neighbor)
+            
+            if len(to_visit) == 0:
+                self._draw_cell(i, j)
+                return
+        
+            random_idx = random.randrange(0, len(to_visit))
+            random_neighbor = to_visit[random_idx]
+            visited.add(f"({random_neighbor[0]}, {random_neighbor[1]})")
+            to_right= random_neighbor[0] > i
+            to_left = random_neighbor[0] < i
+            to_up = random_neighbor[1] < j 
+            to_down = random_neighbor[1] > j
+
+            if to_right:
+                self._cells[i][j].has_right = False
+                self._cells[i + 1][j].has_left = False
+            elif to_left:
+                self._cells[i][j].has_left = False
+                self._cells[i - 1][j].has_right = False
+            elif to_up:
+                self._cells[i][j].has_top = False
+                self._cells[i][j - 1].has_bottom = False
+            elif to_down:
+                self._cells[i][j].has_bottom = False
+                self._cells[i][j + 1].has_top = False
+
+            self._break_walls_r(random_neighbor[0],
+                                random_neighbor[1],
+                                visited)
