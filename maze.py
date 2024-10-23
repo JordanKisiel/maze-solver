@@ -75,9 +75,9 @@ class Maze():
             possible_neighbors = [(i, j + 1), (i + 1, j), (i, j - 1), (i - 1, j)]
             for neighbor in possible_neighbors:
                 in_bounds_i = neighbor[0] < self.num_cols and neighbor[0] >= 0
-                in_bounds_y = neighbor[1] < self.num_rows and neighbor[1] >= 0
+                in_bounds_j = neighbor[1] < self.num_rows and neighbor[1] >= 0
 
-                if in_bounds_i and in_bounds_y:
+                if in_bounds_i and in_bounds_j:
                     if not self._cells[neighbor[0]][neighbor[1]].visited:
                         to_visit.append(neighbor)
 
@@ -121,3 +121,79 @@ class Maze():
         for i in range(self.num_cols):
             for j in range(self.num_rows):
                 fn(self._cells[i][j])
+    
+    def solve(self):
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+
+        curr_cell = self._cells[i][j]
+
+        curr_cell.visited = True
+
+        at_end_cell = i == self.num_cols - 1 and j == self.num_rows - 1 
+
+        if at_end_cell:
+            return True
+
+        cell_top = j - 1 >= 0
+        cell_bottom = j + 1 < self.num_rows
+        cell_left = i - 1 >= 0
+        cell_right = i + 1 < self.num_cols
+
+        # up 
+        if cell_top:
+            next_cell = self._cells[i][j - 1]
+            if not self._is_blocked(curr_cell, next_cell, "up") and not next_cell.visited:
+                curr_cell.draw_move(next_cell)
+                result = self._solve_r(i, j - 1)
+                if result:
+                    return True
+                curr_cell.draw_move(next_cell, True)
+        # down 
+        if cell_bottom:
+            next_cell = self._cells[i][j + 1]
+            if not self._is_blocked(curr_cell, next_cell, "down") and not next_cell.visited:
+                curr_cell.draw_move(next_cell)
+                result = self._solve_r(i, j + 1)
+                if result:
+                    return True
+                curr_cell.draw_move(next_cell, True)
+        # left 
+        if cell_left:
+            next_cell = self._cells[i - 1][j]
+            if not self._is_blocked(curr_cell, next_cell, "left") and not next_cell.visited:
+                curr_cell.draw_move(next_cell)
+                result = self._solve_r(i - 1, j)
+                if result:
+                    return True
+                curr_cell.draw_move(next_cell, True)
+
+        # right 
+        if cell_right:
+            next_cell = self._cells[i + 1][j]
+            if not self._is_blocked(curr_cell, next_cell, "right") and not next_cell.visited:
+                curr_cell.draw_move(next_cell)
+                result = self._solve_r(i + 1, j)
+                if result:
+                    return True
+                curr_cell.draw_move(next_cell, True)
+
+        return False
+
+    def _is_blocked(self, cell, other_cell, direction):
+        if direction == "up":
+            if not cell.has_top and not other_cell.has_bottom:
+                return False 
+        elif direction == "down":
+            if not cell.has_bottom and not other_cell.has_top:
+                return False 
+        elif direction == "left":
+            if not cell.has_left and not other_cell.has_right:
+                return False 
+        elif direction == "right":
+            if not cell.has_right and not other_cell.has_left:
+                return False 
+        return True 
+         
